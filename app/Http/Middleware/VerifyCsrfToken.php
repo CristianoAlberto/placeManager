@@ -13,7 +13,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'createPlace',
-        'placeUpdate/*', // Use wildcard * para incluir qualquer ID
+        'placeUpdate/*',
         'deletePlace/*'
     ];
 }
