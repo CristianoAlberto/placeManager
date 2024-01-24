@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PlaceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::get('/places', [PlaceController::class, 'listByName']);
+Route::get('/findPlace/{id}', [PlaceController::class, 'findById']);
+Route::post('/createPlace', [PlaceController::class, 'store']);
+Route::put('/placeUpdate/{id}', [PlaceController::class, 'update']);
+Route::delete('/deletePlace/{id}', [PlaceController::class, 'destroy']);

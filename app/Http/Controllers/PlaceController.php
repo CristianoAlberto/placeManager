@@ -31,7 +31,6 @@ class PlaceController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'state' => 'required|string|max:255'
         ]);
@@ -65,7 +64,7 @@ class PlaceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, int $id)
     {
         $place = Place::find($id);
 
@@ -74,16 +73,17 @@ class PlaceController extends Controller
         }
 
         $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'state' => 'required|string|max:255'
+            'name' => 'sometimes|string|max:255',
+            'city' => 'sometimes|string|max:255',
+            'state' => 'sometimes|string|max:255'
         ]);
 
-        $place->name = $request->input('name');
-        $place->slug = $this->createSlug($request->input('name'));
-        $place->city = $request->input('city');
-        $place->state = $request->input('state');
+
+
+        $place->name = $request->input('name', $place->name);
+        $place->slug = $this->createSlug($request->input('name', $place->name));
+        $place->city = $request->input('city', $place->city);
+        $place->state = $request->input('state', $place->state);
 
         $place->save();
         return response()->json(['message' => 'Place updated successfully', 'data' => $place], 200);
