@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PlaceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/places', [PlaceController::class, 'listByName']);
+Route::get('/findPlace/{id}', [PlaceController::class, 'findById']);
+Route::post('/createPlace', [PlaceController::class, 'store']);
+Route::put('/placeUpdate/{id}', [PlaceController::class, 'update']);
+Route::get('/deletePlace/{id}', [PlaceController::class, 'destroy']);
