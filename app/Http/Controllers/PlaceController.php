@@ -94,14 +94,7 @@ class PlaceController extends Controller
      */
     public function destroy(string $id)
     {
-        $placeDelete = Place::destroy($id);
-
-        if ($placeDelete === 0) {
-            return response()->json(['message' => 'Place not found'], 404);
-        }
-
-        return response()->json(['message' => 'Place deleted successfully'], 200);
-
+        //
     }
 
 
