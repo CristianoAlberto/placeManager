@@ -1,0 +1,30 @@
+# Use a imagem oficial do PHP para Laravel
+FROM php:8.0-fpm
+
+# Instale as extensões necessárias
+RUN apt-get update \
+    && apt-get install -y libpq-dev libzip-dev unzip \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip \
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
+# Instale o Composer globalmente
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Defina o diretório de trabalho para /var/www
+WORKDIR /var/www
+
+# Copie o código do Laravel para o contêiner
+COPY . /var/www
+
+# Instale as dependências do Composer
+RUN composer install --no-interaction --optimize-autoloader
+
+# Copie o arquivo de configuração do PHP
+COPY ./docker/php.ini /usr/local/etc/php/conf.d/php.ini
+
+# Exponha a porta 9000 para o PHP-FPM
+EXPOSE 9000
+
+# Execute o PHP-FPM
+CMD ["php-fpm"]
