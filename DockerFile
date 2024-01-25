@@ -1,30 +1,47 @@
-# Use a imagem oficial do PHP para Laravel
-FROM php:8.0-fpm
+FROM php:8.3.1-fpm
 
-# Instale as extensões necessárias
-RUN apt-get update \
-    && apt-get install -y libpq-dev libzip-dev unzip \
-    && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip \
-    && pecl install xdebug \
-    && docker-php-ext-enable xdebug
+# WORKDIR /var/www/html
 
-# Instale o Composer globalmente
+# RUN apt-get update && apt-get install -y \
+#     git \
+#     curl \
+#     libpng-dev \
+#     libonig-dev \
+#     libxml2-dev \
+#     zip \
+#     unzip
+
+# RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+
+# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# COPY . .
+
+# RUN composer install
+
+# # Executa as migrações antes de iniciar o servidor
+# # Adicione o comando migrate ao final do script de inicialização
+# CMD ["sh", "-c", "composer install && wait-for-it.sh -t 60 mysql:3306 -- php artisan migrate"]
+# CMD php artisan serve --host=0.0.0.0 --port=8000 
+WORKDIR /var/www/html
+
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip
+
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Defina o diretório de trabalho para /var/www
-WORKDIR /var/www
+COPY . .
 
-# Copie o código do Laravel para o contêiner
-COPY . /var/www
+# Adicione as permissões necessárias para o script wait-for-it.sh
+RUN chmod +x wait-for-it.sh
 
-# Instale as dependências do Composer
-RUN composer install --no-interaction --optimize-autoloader
-
-# Copie o arquivo de configuração do PHP
-COPY ./docker/php.ini /usr/local/etc/php/conf.d/php.ini
-
-# Exponha a porta 9000 para o PHP-FPM
-EXPOSE 9000
-
-# Execute o PHP-FPM
-CMD ["php-fpm"]
+# Aguarde o MySQL e, em seguida, execute as migrações e inicie o servidor
+CMD ["sh", "-c", "./wait-for-it.sh mysql:3306 -t 60 -- php artisan migrate && php-fpm"]
