@@ -57,7 +57,7 @@ This is a simple API for managing places.
 
 ### List places and filter them by name
 ```http
-Endpoint: GET /places
+Endpoint: GET /places/
 Content-Type: application/json
 OptionalParameters: name(string), filters the results based on the provided name
 ExampleUsagewithNameQuery: GET /places?name=DesiredName
@@ -65,7 +65,7 @@ ExampleUsagewithNameQuery: GET /places?name=DesiredName
 
 ### Create a new place
 ```http
-Endpoint: POST /createPlace
+Endpoint: POST /create
 Content-Type: application/json
 Body:
 {
@@ -76,7 +76,7 @@ Body:
 ```
 ### Update information for a place
 ```http
-Endpoint: PUT /placeUpdate/{id}
+Endpoint: PUT /update/{id}
 Content-Type: application/json
 Body:
 {  
@@ -87,7 +87,7 @@ Body:
 ```
 ### Find a place by ID
 ```http
-Endpoint: GET /findPlace/{id}
+Endpoint: GET /{id}
 Content-Type: application/json
 ```
 
