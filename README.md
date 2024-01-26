@@ -21,6 +21,7 @@ This is a simple API for managing places.
 - [Visual Studio](https://visualstudio.microsoft.com/) or another code editor
 - [Composer](https://getcomposer.org/download/)
 - [Laravel 10](https://laravel.com/docs/10.x/installation)
+- [Docker](https://www.docker.com/get-started/)
 
 ## Environment Setting
 
@@ -44,6 +45,13 @@ This is a simple API for managing places.
     php artisan migrate
     php artisan serve
     ```
+    
+4. **Run the Project using Docker:**
+
+    ```bash
+    docker-compose up --build
+    ```
+    This will set up the necessary containers and services defined in the `docker-compose.yml` file.
 
 ## Usage Examples
 
