@@ -39,8 +39,6 @@ services:
             MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
         ports:
             - "3306:3306"
-        labels:
-            - "com.example.description=Banco de Dados MySQL"
 
 networks:
     mynetwork:
