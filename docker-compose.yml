@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 
 services:
     app:
@@ -11,19 +11,36 @@ services:
             - .:/var/www/html
         depends_on:
             - mysql
+        restart: always
+        networks:
+            - mynetwork
         environment:
-            - DB_CONNECTION=${DB_CONNECTION:-mysql}
-            - DB_HOST=${DB_HOST}
+            - DB_CONNECTION=${DB_CONNECTION}
+            - DB_HOST=mysql
             - DB_PORT=${DB_PORT}
             - DB_DATABASE=${DB_DATABASE}
             - DB_USERNAME=${DB_USERNAME}
             - DB_PASSWORD=${DB_PASSWORD}
+        labels:
+            - "com.example.description=Aplicação Laravel"
+        cpus: 0.5
+        mem_limit: 512M
+
     mysql:
         image: mysql:8.0
+        container_name: laravel-db
         restart: unless-stopped
+        networks:
+            - mynetwork
         environment:
-            MYSQL_DATABASE: ${DB_DATABASE:-laravel}
-            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_DATABASE: "placemanager"
+            MYSQL_ROOT_PASSWORD: ""
+            MYSQL_PASSWORD: ""
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
         ports:
             - "3306:3306"
+        labels:
+            - "com.example.description=Banco de Dados MySQL"
+
+networks:
+    mynetwork:

@@ -1,47 +1,33 @@
 FROM php:8.3.1-fpm
 
-# WORKDIR /var/www/html
+# FROM php:8.1.0-apache
 
-# RUN apt-get update && apt-get install -y \
-#     git \
-#     curl \
-#     libpng-dev \
-#     libonig-dev \
-#     libxml2-dev \
-#     zip \
-#     unzip
+# Set the COMPOSER_ALLOW_SUPERUSER environment variable
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
-
-# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# COPY . .
-
-# RUN composer install
-
-# # Executa as migrações antes de iniciar o servidor
-# # Adicione o comando migrate ao final do script de inicialização
-# CMD ["sh", "-c", "composer install && wait-for-it.sh -t 60 mysql:3306 -- php artisan migrate"]
-# CMD php artisan serve --host=0.0.0.0 --port=8000 
 WORKDIR /var/www/html
-
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    unzip
-
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
-
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
 COPY . .
 
-# Adicione as permissões necessárias para o script wait-for-it.sh
-RUN chmod +x wait-for-it.sh
+RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Aguarde o MySQL e, em seguida, execute as migrações e inicie o servidor
-CMD ["sh", "-c", "./wait-for-it.sh mysql:3306 -t 60 -- php artisan migrate && php-fpm"]
+# Install required packages
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    vim \
+    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install dependencies with Composer
+RUN composer install --prefer-dist --optimize-autoloader --no-interaction --ignore-platform-reqs
+
+
+RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views \
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && php artisan config:clear
+
+CMD  php artisan serve --host=0.0.0.0 --port=8000 && php artisan migrate
